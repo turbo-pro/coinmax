@@ -1,0 +1,85 @@
+buildscript {
+    ext {
+        springBootVersion = "$SPRING_BOOT_VERSION"
+    }
+    repositories {
+        maven { url "${REPOSITORIES_MAVEN_URL}" }
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+    configurations {
+        compile.exclude module: "spring-boot-starter-tomcat"
+    }
+}
+
+ext {
+    springCloudVersion = "$SPRING_CLOUD_VERSION"
+}
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+version = "$CREDAN_VERSION"
+sourceCompatibility = "$JAVA_VERSION"
+
+repositories {
+    maven { url "${REPOSITORIES_MAVEN_URL}" }
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-undertow')
+
+    //redis
+    //compile('org.springframework.boot:spring-boot-starter-data-redis')
+    //cache
+    compile('org.springframework.boot:spring-boot-starter-cache')
+    //mybatis
+    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${MYBATI_SPRING_BOOT_VERSION}")
+    //druid数据库连接池
+    compile ("com.alibaba:druid:${DRUID_VERSIN}")
+    runtime('mysql:mysql-connector-java')
+
+    //lombok
+    compile('org.projectlombok:lombok')
+
+    //Restfull API接口文档
+    compile("io.springfox:springfox-swagger2:${SWAGGER2_VERSION}")
+    compile("io.springfox:springfox-swagger-ui:${SWAGGER2_VERSION}")
+
+    //retrofit+okhttp
+    compile("com.squareup.retrofit2:retrofit:${RETROFIT_VERSION}")
+    compile("com.squareup.retrofit2:converter-gson:${RETROFIT_VERSION}")
+
+    //fastjson
+    compile ("com.alibaba:fastjson:${FASTJSON_VERSION}")
+
+    //图算法
+    compile("org.jgrapht:jgrapht-core:1.2.0")
+    //脚本规则引擎
+    compile("com.alibaba:QLExpress:3.2.0"){
+        exclude module: 'log4j'
+    }
+
+    compile('com.lmax:disruptor:3.4.2')
+
+}
+
+springBoot {
+    mainClass = "$SPRING_BOOT_MAIN_CLASS"
+}
+bootRun {
+    addResources = true
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
